@@ -93,4 +93,39 @@ class ExpenseReportTest {
                 "Total expenses: 8001\r\n";
         assertEquals(expected,actual);
     }
+
+    @Test
+    public void testAllExpenseMealWithLunch() {
+        Expense breakfact = new Expense();
+        breakfact.type = ExpenseType.BREAKFAST;
+        breakfact.amount = 1000;
+
+        Expense dinner = new Expense();
+        dinner.type = ExpenseType.DINNER;
+        dinner.amount = 5001;
+
+        Expense lunch = new Expense();
+        lunch.type = ExpenseType.LUNCH;
+        lunch.amount = 2001;
+
+        Expense carRental = new Expense();
+        carRental.type = ExpenseType.CAR_RENTAL;
+        carRental.amount = 2000;
+
+        ExpenseReport report = new ExpenseReport();
+        java.io.ByteArrayOutputStream out = new java.io.ByteArrayOutputStream();
+        PrintStream ps = new PrintStream(out);
+        System.setOut(ps);
+        Date date = new Date();
+        report.printReport(List.of(breakfact,dinner,carRental,lunch),date);
+        String actual = out.toString();
+        String expected = "Expenses "+date+"\r\n" +
+                "Breakfast\t1000\t \r\n" +
+                "Dinner\t5001\tX\r\n" +
+                "Car Rental\t2000\t \r\n" +
+                "Lunch\t2001\tX\r\n" +
+                "Meal expenses: 8002\r\n" +
+                "Total expenses: 10002\r\n";
+        assertEquals(expected,actual);
+    }
 }

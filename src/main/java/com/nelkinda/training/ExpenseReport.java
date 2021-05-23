@@ -4,10 +4,22 @@ import java.util.Date;
 import java.util.List;
 
 enum ExpenseType {
-    DINNER("Dinner"), BREAKFAST("Breakfast"), CAR_RENTAL("Car Rental");
+    DINNER("Dinner",5000,true),
+    BREAKFAST("Breakfast",1000,true),
+    CAR_RENTAL("Car Rental",Integer.MAX_VALUE,false),
+    LUNCH("Lunch",2000,true);
 
-    ExpenseType(String expenseType) {
+    String expenseName;
+    Integer overExpense;
+    Boolean isMeal;
 
+    ExpenseType(String expenseName,Integer overExpense, Boolean isMeal) {
+        this.expenseName = expenseName;
+        this.overExpense = overExpense;
+        this.isMeal = isMeal;
+    }
+    boolean isMeal() {
+        return this.isMeal;
     }
 }
 
@@ -15,29 +27,19 @@ class Expense {
     ExpenseType type;
     int amount;
 
-    public String getExpenseName() {
-        String expenseName = "";
-        switch (type) {
-        case DINNER:
-            return "Dinner";
-        case BREAKFAST:
-            return "Breakfast";
-        case CAR_RENTAL:
-            return "Car Rental";
-        }
-        return expenseName;
-    }
-
     public int getMealExpenses() {
-        if (type == ExpenseType.DINNER || type == ExpenseType.BREAKFAST) {
+        if (type.isMeal()) {
             return amount;
         }
         return 0;
     }
 
-    String getOverExpensesMarker() {
-        return type == ExpenseType.DINNER && amount > 5000
-                || type == ExpenseType.BREAKFAST && amount > 1000 ? "X" : " ";
+    public String getOverExpensesMarker() {
+        return isOverExpensive() ? "X" : " ";
+    }
+
+    private boolean isOverExpensive() {
+        return amount > type.overExpense;
     }
 }
 
@@ -58,7 +60,9 @@ public class ExpenseReport {
 
     private void printBody(List<Expense> expenses) {
         expenses.stream()
-                .map(expense -> expense.getExpenseName() + "\t" + expense.amount + "\t" + expense.getOverExpensesMarker())
+                .map(expense -> expense.type.expenseName
+                                + "\t" + expense.amount + "\t"
+                                + expense.getOverExpensesMarker())
                 .forEach(System.out::println);
     }
 
